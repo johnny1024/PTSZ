@@ -1,0 +1,5 @@
+sch10_5_2.txt (k=5, h=0.2)
+
+F r 0 1 2 ... (F - f celu, r - moment startu zadañ, 0 1 2 ... - czasy zakoñczeñ zadañ)
+edit - kolejnoœæ zadania
+
