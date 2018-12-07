@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import Evolution.Evolution;
+
 public class TaskList {
 	private List<Task> taskList;
 	private int processingTimeSum = 0;
@@ -38,8 +40,11 @@ public class TaskList {
     
     public void solve() {
         long startTime = System.nanoTime();
+        
         //algorithm1();
-        algorithm2();
+        //algorithm2();
+        algorithm3_Evolution();
+        
         time = (System.nanoTime()-startTime) / 1000; // 1k - micro, 1kk - mili
         countF();
         printResult();
@@ -80,6 +85,12 @@ public class TaskList {
         taskList = resultTaskList;
     }
     
+    private void algorithm3_Evolution() {
+    	Evolution evolution = new Evolution(taskList, r, d);
+    	evolution.solve();
+    	taskList = evolution.getResultList();
+    }
+    
     private void countF() {
     	int currentEnd = r;
     	F = 0;
@@ -93,9 +104,9 @@ public class TaskList {
 	}
     
     private void printResult() {
-    	//System.out.println("Result for " + inputFileName + " for k=" + k + " is " + F + " (" + time+").");
+    	System.out.println("Result for " + inputFileName + " for k=" + k + " is " + F + " (" + time+").");
     	//System.out.println(time);
-        System.out.println(F);
+        //System.out.println(F);
     }
     
     private String makeFileName() {
@@ -149,5 +160,13 @@ public class TaskList {
 	
 	public void setInputFileName (String inputFileName) {
 		this.inputFileName = inputFileName;
+	}
+	
+	public int getR() {
+		return r;
+	}
+	
+	public float getH() {
+		return h;
 	}
 }

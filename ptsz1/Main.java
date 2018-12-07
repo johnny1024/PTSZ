@@ -19,7 +19,7 @@ public class Main {
 		}
 		
 		FullData fullData = new FullData(instance);
-        fullData.setParameters(0, 0.2f);
+        fullData.setParameters(0, 0.8f);
         
         //for (int i = 0; i < 11; i++) {
         fullData.solveAll();
