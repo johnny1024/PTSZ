@@ -18,9 +18,11 @@ public class Individual {
 		taskList = new ArrayList<>();
 	}
 	
-	void mutate() {
-		int rand = random.nextInt(taskList.size());
-		Collections.swap(taskList, rand, (rand+1)%taskList.size());
+	void mutate(int instanceSize) {
+		for(int i = 0; i < instanceSize / 10; i++) {
+			int rand = random.nextInt(taskList.size());
+			Collections.swap(taskList, rand, (rand+1)%taskList.size());
+		}
 	}
 	
 	void evaluate(int r, int d) {

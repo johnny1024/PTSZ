@@ -43,12 +43,36 @@ public class TaskList {
         
         //algorithm1();
         //algorithm2();
+        //setR();
         algorithm3_Evolution();
         
         time = (System.nanoTime()-startTime) / 1000; // 1k - micro, 1kk - mili
         countF();
         printResult();
         saveResult();
+    }
+    
+    private int average(boolean tard) {
+    	int result = 0;
+    	for (Task task : taskList) {
+    		if(tard) {
+    			result += task.getTardiness();
+        		
+        	} else {
+        		result += task.getEarliness();
+        	}
+		}
+    	
+    	return result / numberOfTasks;
+    }
+    
+    private void setR() {
+    	if (h > 0.5f) {
+    		int tardinessAverage = average(true);
+        	int earlinessAverage = average(false);
+        	float proportion = tardinessAverage / earlinessAverage;
+        	r = d - ((tardinessAverage / (tardinessAverage + earlinessAverage)) * processingTimeSum);
+    	}
     }
     
     private void algorithm1() {
@@ -85,8 +109,10 @@ public class TaskList {
         taskList = resultTaskList;
     }
     
+    
+    
     private void algorithm3_Evolution() {
-    	Evolution evolution = new Evolution(taskList, r, d);
+    	Evolution evolution = new Evolution(taskList, r, d, numberOfTasks);
     	evolution.solve();
     	taskList = evolution.getResultList();
     }

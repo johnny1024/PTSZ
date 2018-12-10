@@ -9,6 +9,7 @@ import ptsz1.Task;
 import ptsz1.TaskList;
 
 public class Evolution {
+	private int instanceSize;
 	private int iterations = 1000;
 	private int populationSize = 10;
 	private int r;
@@ -22,7 +23,9 @@ public class Evolution {
 	
 	private Random random = new Random();
 	
-	public Evolution (List<Task> taskList, int r, int d) {
+	public Evolution (List<Task> taskList, int r, int d, int instanceSize) {
+		this.instanceSize = instanceSize;
+		this.populationSize = instanceSize;
 		this.inputList = taskList;
 		this.r = r;
 		this.d = d;
@@ -76,7 +79,7 @@ public class Evolution {
 			}
 			
 			if(random.nextInt(100)+1 < mutationProbability) {
-				child.mutate();
+				child.mutate(instanceSize);
 			}
 			population.add(child);
 		}
