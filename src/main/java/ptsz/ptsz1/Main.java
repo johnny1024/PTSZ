@@ -17,10 +17,13 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
+		float h = 0.8f;
+
 		FullData fullData = new FullData(instance);
-        fullData.setParameters(0, 0.8f);
-        
+        fullData.setParameters(0, h);
+
+		System.out.println("H: " + h);
         //for (int i = 0; i < 11; i++) {
         fullData.solveAll();
         //System.out.println("");

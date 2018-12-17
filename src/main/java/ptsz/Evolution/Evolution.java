@@ -8,14 +8,14 @@ import java.util.stream.Collectors;
 @Data
 public class Evolution {
 
+    public static int iloscPrzedzialow = 15;
     private int instanceSize;
-    private int iterations = 200;
+    private int iterations = 250;
     private int rIterations = 100;
     private int populationSize = 10;
     private int r;
     private int d;
-    private int mutationProbability = 40; // %
-    private int iloscPrzedzialowDlaR = 10;
+    private int mutationProbability = 50; // %
 
     private List<Task> inputList;
     private List<Task> resultList;
@@ -48,9 +48,17 @@ public class Evolution {
     private Individual getVariantEarlToTard(List<Task> list) {
         Individual individual = new Individual();
         individual.getTaskList().addAll(list.stream().sorted(Comparator.comparingDouble(Task::getEarlToTard)).collect(Collectors.toList()));
+
+        individual.reevaluateR(d, iloscPrzedzialow);
         return individual;
     }
 
+    private Individual getVariant2(List<Task> inputList) {
+        Individual individual = new Individual();
+        individual.getTaskList().addAll(inputList.stream().sorted(Comparator.comparingDouble(Task::getVariation)).collect(Collectors.toList()));
+        individual.reevaluateR(d, iloscPrzedzialow);
+        return individual;
+    }
 
     private void nonRandomMethod() {
         // 1 	malejaco
@@ -66,8 +74,10 @@ public class Evolution {
         inputList.parallelStream().forEach(Task::initStatistics);
 
         population.add(getVariantEarlToTard(inputList));
-        population.add(getVariantEarlToTard(inputList));
+//        population.add(getVariantEarlToTard(inputList));
 
+        population.add(getVariant2(inputList));
+//        population.add(getVariant2(inputList));
 
         for (int i = population.size(); i < populationSize; i++) {
             Individual individual = new Individual();
@@ -85,8 +95,9 @@ public class Evolution {
         resultIndividual = population.get(populationSize -1);
         resultR = resultIndividual.getR();
         resultList = population.get(populationSize - 1).getTaskList();
-        resultIndividual.reevaluateR(0, d, 0);
+        resultIndividual.reevaluateR(d, iloscPrzedzialow);
     }
+
 
 
 
@@ -120,7 +131,7 @@ public class Evolution {
             if (random.nextInt(100) + 1 < mutationProbability) {
                 child.mutate(instanceSize);
             }
-            child.reevaluateR(rIterations, this.d, this.iloscPrzedzialowDlaR);
+            child.reevaluateR(this.d, iloscPrzedzialow);
             population.add(child);
         }
 
@@ -131,10 +142,13 @@ public class Evolution {
 
     // evaluate and kill
     private void kill() {
-        for (Individual individual : population) if (individual.getF() == 0) individual.evaluate(r, d);
-        Collections.sort(population, Collections.reverseOrder(Comparator.comparing(Individual::getF)));
+        for (Individual individual : population) if (individual.getF() == 0) individual.reevaluateR(d, iloscPrzedzialow);
 
-        for (int i = 0; i < populationSize / 2; i++) population.remove(0);
+        population.sort(Collections.reverseOrder(Comparator.comparing(Individual::getF)));
+
+        if (populationSize / 2 > 0) {
+            population.subList(0, populationSize / 2).clear();
+        }
     }
 
     public List<Task> getResultList() {

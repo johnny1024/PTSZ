@@ -29,17 +29,9 @@ public class Individual {
         }
     }
 
-    void evaluate(int r, int d) {
-        reevaluateR(0,d,0);
-//        int currentEnd = (r == -1) ? this.r : r;
-//        F = getFForList(r, d);
-
-        /*for (Task task : taskList) {
-            currentEnd += task.getProcessingTime();
-            if (currentEnd < d) F += Math.abs(currentEnd - d) * task.getEarliness();
-            else if (currentEnd > d) F += Math.abs(currentEnd - d) * task.getTardiness();
-        }*/
-    }
+//    void evaluate(int d) {
+//        reevaluateR(d,Evolution.iloscPrzedzialow);
+//    }
 
     List<Task> getTaskList() {
         return taskList;
@@ -57,8 +49,8 @@ public class Individual {
         return F;
     }
 
-    public void reevaluateR(int iterations, int d, int iloscPrzedzialow) {
-        r = countBestRForList(iterations, d, iloscPrzedzialow);
+    public void reevaluateR(int d, int iloscPrzedzialow) {
+        r = countBestRForList(d, iloscPrzedzialow);
         F = getFForList(r, d);
     }
 
@@ -72,14 +64,15 @@ public class Individual {
         return f;
     }
 
-    private int countBestRForList(int iterations, int d, int iloscPrzedzialowDlaR) {
+    private int countBestRForList(int d, int iloscPrzedzialowDlaR) {
         int bestR = 0;
-//        int bestF = getFForList(tasks, bestR, this.d);
+        int maxR = (int) (d * 0.8);
 
-        int maxR = (int) 0.8 * d;
+        int stepR = maxR / iloscPrzedzialowDlaR;
 
         return IntStream.range(0, maxR)
                 .parallel()
+                .filter(i -> i%stepR == 0)
                 .reduce((i1, i2) -> getFForList(i1, d) > getFForList(i2, d) ? i2 : i1)
                 .orElse(bestR);
     }

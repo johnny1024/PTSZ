@@ -13,9 +13,17 @@ public class Task {
     private double variation;
     private int earlMinusTard;
 
-    public void initStatistics(){
+    public void initStatistics() {
         earlToTard = ((double) earliness) / ((double) tardiness);
-        variation = Math.abs((earliness + tardiness / 2) - earliness);
+        variation = (double) (earliness + tardiness) / 2 - tardiness; // - oznacza ze
         earlMinusTard = earliness - tardiness;
     }
 }
+
+/**
+ * earl 10
+ * avg  15
+ * tard 20
+ *  avg - earl = 5 > 0 -> ze lepiej na prawo polozyc
+ *  < 0 -> lepiej na lewo
+ */
