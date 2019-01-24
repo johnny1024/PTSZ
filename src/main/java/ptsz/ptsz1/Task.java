@@ -26,4 +26,9 @@ public class Task {
  * tard 20
  *  avg - earl = 5 > 0 -> ze lepiej na prawo polozyc
  *  < 0 -> lepiej na lewo
+ *  earlMinusTard ->
+ *  -x =>  na lewo
+ *  x  =>  na prawo
+ *
+ *
  */

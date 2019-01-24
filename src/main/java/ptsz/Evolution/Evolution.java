@@ -5,17 +5,18 @@ import ptsz.ptsz1.Task;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 @Data
 public class Evolution {
 
     public static int iloscPrzedzialow = 15;
     private int instanceSize;
-    private int iterations = 250;
-    private int rIterations = 100;
+    private int iterations = 500;
+    //    private int rIterations = 100;
     private int populationSize = 10;
     private int r;
     private int d;
-    private int mutationProbability = 50; // %
+    private int mutationProbability = 60; // %
 
     private List<Task> inputList;
     private List<Task> resultList;
@@ -28,7 +29,7 @@ public class Evolution {
 
     public Evolution(List<Task> taskList, int r, int d, int instanceSize) {
         this.instanceSize = instanceSize;
-        this.populationSize = (int) (Math.log(instanceSize))*20;
+        this.populationSize = (int) (Math.log(instanceSize)) * 20;
 //        this.populationSize = instanceSize;
         this.inputList = taskList;
         this.r = r;
@@ -47,7 +48,9 @@ public class Evolution {
 
     private Individual getVariantEarlToTard(List<Task> list) {
         Individual individual = new Individual();
-        individual.getTaskList().addAll(list.stream().sorted(Comparator.comparingDouble(Task::getEarlToTard)).collect(Collectors.toList()));
+        individual.getTaskList()
+                .addAll(list.stream()
+                        .sorted(Comparator.comparingDouble(Task::getEarlToTard)).collect(Collectors.toList()));
 
         individual.reevaluateR(d, iloscPrzedzialow);
         return individual;
@@ -56,6 +59,13 @@ public class Evolution {
     private Individual getVariant2(List<Task> inputList) {
         Individual individual = new Individual();
         individual.getTaskList().addAll(inputList.stream().sorted(Comparator.comparingDouble(Task::getVariation)).collect(Collectors.toList()));
+        individual.reevaluateR(d, iloscPrzedzialow);
+        return individual;
+    }
+
+    private Individual getVariant3(List<Task> inputList) {
+        Individual individual = new Individual();
+        individual.getTaskList().addAll(inputList.stream().sorted(Comparator.comparingDouble(Task::getEarlMinusTard)).collect(Collectors.toList()));
         individual.reevaluateR(d, iloscPrzedzialow);
         return individual;
     }
@@ -73,15 +83,27 @@ public class Evolution {
     public void solve() { // wykonywane K razy dla roznych k (0..10)
         inputList.parallelStream().forEach(Task::initStatistics);
 
-        population.add(getVariantEarlToTard(inputList));
+        // 20%
+        for (int i = 0; i < populationSize * 0.2; i++) {
+            population.add(getVariantEarlToTard(inputList));
+        }
+        // 20%
+        for (int i = 0; i < populationSize * 0.2; i++) {
+            population.add(getVariant2(inputList));
+        }
+
+        for (int i = 0; i < populationSize * 0.2; i++) {
+            population.add(getVariant3(inputList));
+        }
+
+
 //        population.add(getVariantEarlToTard(inputList));
 
-        population.add(getVariant2(inputList));
 //        population.add(getVariant2(inputList));
 
         for (int i = population.size(); i < populationSize; i++) {
             Individual individual = new Individual();
-            for(int j = 0; j < inputList.size(); j++) {
+            for (int j = 0; j < inputList.size(); j++) {
                 individual.getTaskList().add(inputList.get(j));
             }
             Collections.shuffle(individual.getTaskList());
@@ -92,13 +114,11 @@ public class Evolution {
             cross();
             kill();
         }
-        resultIndividual = population.get(populationSize -1);
+        resultIndividual = population.get(populationSize - 1);
         resultR = resultIndividual.getR();
         resultList = population.get(populationSize - 1).getTaskList();
         resultIndividual.reevaluateR(d, iloscPrzedzialow);
     }
-
-
 
 
     // cross and mutate
@@ -142,7 +162,8 @@ public class Evolution {
 
     // evaluate and kill
     private void kill() {
-        for (Individual individual : population) if (individual.getF() == 0) individual.reevaluateR(d, iloscPrzedzialow);
+        for (Individual individual : population)
+            if (individual.getF() == 0) individual.reevaluateR(d, iloscPrzedzialow);
 
         population.sort(Collections.reverseOrder(Comparator.comparing(Individual::getF)));
 

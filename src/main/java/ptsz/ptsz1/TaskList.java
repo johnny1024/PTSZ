@@ -133,7 +133,7 @@ public class TaskList {
 	}
     
     private void printResult() {
-    	System.out.println("Result for " + inputFileName + " for k=" + k + " is " + F + " (" + time+")." + ", r: "+r);
+    	System.out.println(inputFileName.substring(inputFileName.lastIndexOf('\\')+1) + "\tk=" + k + " \t" + F + "  \ttime=(" + time+"),\tr: "+r);
     	//System.out.println(time);
         //System.out.println(F);
     }
